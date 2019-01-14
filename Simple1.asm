@@ -25,9 +25,16 @@ start 	lfsr	FSR0, myArray	; Load FSR0 with address in RAM
 	movlw	.22		; 22 bytes to read
 	movwf 	counter		; our counter register
 loop 	tblrd*+			; move one byte from PM to TABLAT, increment TBLPRT
+	movlw	0xFF
+	movwf	0x20
+	call	delay
 	movff	TABLAT, POSTINC0	; move read data from TABLAT to (FSR0), increment FSR0	
 	decfsz	counter		; count down to zero
 	bra	loop		; keep going until finished
+	
+delay	decfsz 0x20
+	bra delay
+	return
 	
 	goto	0
 
