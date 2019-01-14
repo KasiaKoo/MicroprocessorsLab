@@ -7,7 +7,7 @@
 	org 0x100		    ; Main code starts here at address 0x100
 
 start
-	movlw	0xff
+	movlw	0xff		    ; Making Port D into input
 	movwf	TRISD, ACCESS
 	movlw 	0x0
 	movwf	TRISC, ACCESS	    ; Port C all outputs
