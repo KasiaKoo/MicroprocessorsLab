@@ -6,16 +6,16 @@
 	
 	org 0x100		    ; Main code starts here at address 0x100
 
-start
-	movlw 	0x0
-	movwf	TRISB, ACCESS	    ; Port C all outputs
-	bra 	test
-loop	movff 	0x06, PORTB
-	incf 	0x06, W, ACCESS
-test	movwf	0x06, ACCESS	    ; Test for end of loop condition
-	movlw 	0x63
-	cpfsgt 	0x06, ACCESS
-	bra 	loop		    ; Not yet finished goto start of loop again
-	goto 	0x0		    ; Re-run program from start
+start	movlw	0x00
+	movwf	TRISD, ACCESS
+
 	
+loop	movlw	0x55
+	movwf	PORTD, ACCESS
+	
+	bra	loop
+	
+	goto	0x0
+	
+
 	end
