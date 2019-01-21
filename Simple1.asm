@@ -19,10 +19,10 @@ start	movlw	0x00		    ; setting PORTD as only an output
 	movwf	PORTD, ACCESS
 	
 	movlw 0x0A			;choosing data that we want to put onto memory 1	
-	movwf	0x05			;adress for data in memory 1
+	movwf	0x05			;address for data in memory 1
 	
 	movlw	0x0B			;choosing data that we want to put on memory 2
-	movwf	0x06			;choosing adress for data for memor 2
+	movwf	0x06			;choosing address for data for memor 2
 	
 	call write
 	call read
@@ -91,11 +91,10 @@ read
 	movlw  0x45		    ; OE2 Low
 	movwf PORTD
 	
-	movff PORTE,PORTJ	    ; Show read data
+	movff PORTE,PORTF	    ; Show read data
 	
 	movlw  0x0F		    ; OE2 high
 	movwf PORT
-	movff PORTE,PORTF	    ; read data from port E display on port C
 	
 
 	end
