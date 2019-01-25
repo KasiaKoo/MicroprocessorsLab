@@ -1,6 +1,6 @@
 #include p18f87k22.inc
 
-    global  LCD_Setup, LCD_Write_Message
+    global  LCD_Setup, LCD_Write_Message, LCD_clear
 
 acs0    udata_acs   ; named variables in access ram
 LCD_cnt_l   res 1   ; reserve 1 byte for variable LCD_cnt_l
@@ -48,11 +48,20 @@ LCD_Setup
 
 LCD_Write_Message	    ; Message stored at FSR2, length stored in W
 	movwf   LCD_counter
+	call	second_line
+	movf	LCD_counter, W
 LCD_Loop_message
 	movf    POSTINC2, W
 	call    LCD_Send_Byte_D
 	decfsz  LCD_counter
 	bra	LCD_Loop_message
+	return
+
+second_line
+	movlw	b'11000000'
+	call	LCD_Send_Byte_I
+	movlw	.10
+	call	LCD_delay_x4us
 	return
 
 LCD_Send_Byte_I		    ; Transmits byte stored in W to instruction reg
@@ -132,7 +141,16 @@ lcdlp1	decf 	LCD_cnt_l,F	; no carry when 0x00 -> 0xff
 	bc 	lcdlp1		; carry, then loop again
 	return			; carry reset so return
 
-
+LCD_clear
+	movlw	b'11000000'		;setting RB0:5 as an output (not actually necessary)
+	movwf	TRISB
+	movlw	b'00000001'		;instruction to clear display
+	call	LCD_Send_Byte_I
+	movlw   .2
+	call LCD_delay_ms		;delay 2 times 1ms
+	;call LCD_delay_ms	
+	return
+	
     end
 
 
