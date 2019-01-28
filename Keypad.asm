@@ -9,20 +9,26 @@ Keypad_Setup
 	bsf PADCFG1, REPU, BANKED	;set pull ups to on for PORTE
 	movlb 0x00
 	clrf LATE			;writing 0s to the LATE register
-	movlw 0xFF
-	movwf TRISH			;setting PORTH to input
+	movlw 0x00
+	movwf TRISH			;setting PORTH to output
+	movwf PORTH
 	return
 	
 Column
 	movlw 0x0F
 	movwf TRISE, ACCESS			;setting 4-7 as outputs and 0-3 as inputs
-	;may need to add delay here
+	movlw 0x0A
+	movwf 0x30
+	call delay
 	return
 	
 Row
 	movlw 0xF0
 	movwf TRISE, ACCESS			;reversing inputs and outputs
-	;may need to add delay here
+	movlw 0x0A
+	movwf 0x30
+	call delay
+	;cpfseq 
 	return
 	
 Read_Keypad
@@ -33,7 +39,12 @@ Read_Keypad
 	movf 0x07, W
 	addwf 0x05, W
 	movwf  0x11
-	movwf PORTH, ACCESS
+	movff 0x11, PORTH
+	call Column
+	return
+
+delay	decfsz	0x30	; decrement until zero
+	bra delay
 	return
 
 	end
