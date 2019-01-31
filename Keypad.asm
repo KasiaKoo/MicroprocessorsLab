@@ -1,6 +1,7 @@
 #include p18f87k22.inc
 
-    global  Keypad_Setup, Column, Row, Read_Keypad
+    global  Keypad_Setup, Column, Row, Read_Keypad_H
+    extern  Dic_Setup, Dic_4to2, Dic_Hex, Dic_HextoText
 
 Keypad code
     
@@ -31,15 +32,26 @@ Row
 	;cpfseq 
 	return
 	
-Read_Keypad
+Read_Keypad_H
 	call Column
-	movff PORTE, 0x05
+	movf PORTE, W
+	call Dic_4to2
+	movwf 0x05
 	call Row
-	movff PORTE, 0x07
-	movf 0x07, W
-	addwf 0x05, W
-	movwf  0x11
+	movf PORTE, W
+	call Dic_4to2
+	movwf 0x06
+	call Dic_Hex
+	call Dic_HextoText
+	movwf 0x11
 	movff 0x11, PORTH
+	;movff PORTE, 0x05
+	;call Row
+	;movff PORTE, 
+	;movf 0x07, W
+	;addwf 0x05, W
+	;movwf  0x11
+	;movff 0x11, PORTH
 	call Column
 	return
 
