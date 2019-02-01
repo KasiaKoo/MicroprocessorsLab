@@ -57,15 +57,16 @@ Dic_4to2
     return
     
 Dic_Hex
-    rlncf 0x05
-    rlncf 0x05
+    rlncf 0x06
+    rlncf 0x06
     movf  0x05, W
-    iorwf 0x06	    ;in W we have the hex we want
+    iorwf 0x06, W	    ;in W we have the hex we want
     return
     
 Dic_HextoText
     movf PLUSW1, W
     return
-   
+  
+
     end
 
