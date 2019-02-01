@@ -1,6 +1,6 @@
 	#include p18f87k22.inc
 
-	extern  Keypad_Setup, Column, Row, Read_Keypad_H  ;external Keypad subroutines
+	extern  Keypad_Setup, Column, Row, Read_Keypad_H, LCD_delay_ms  ;external Keypad subroutines
 	extern  Dic_Setup, Dic_4to2, Dic_Hex, Dic_HextoText
 	
 
@@ -14,7 +14,7 @@ setup	call    Keypad_Setup	; setupp Keypad
 	call	Dic_Setup
 	movlw 0x0F
 	movwf 0x021
-	call Column
+	
 
 	goto	start
 	
@@ -22,6 +22,7 @@ setup	call    Keypad_Setup	; setupp Keypad
 start 	;movlw 0x10
 	;movwf PORTE
 	;call Row
+	call Column
 	
 loop	movlw 0x05
 	movwf 0x030
@@ -37,10 +38,11 @@ loop	movlw 0x05
 	cpfsgt	0x021
 	bra loop
 	call Read_Keypad_H
+	call LCD_delay_ms
+	
+	goto	start		; goto current line in code (stay at this line forever)
 
-	goto	$		; goto current line in code (stay at this line forever)
-
-delay	decfsz	0x30	; decrement until zero
+delay	decfsz	0xF0	; decrement until zero
 	bra delay
 	return
 	
