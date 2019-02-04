@@ -67,13 +67,13 @@ loop 	tblrd*+			; one byte from PM to TABLAT, increment TBLPRT
 	;goto	$
 	
 measure_loop
-	call	LCD_delay_ms                                                                                                                      
-	call	LCD_clear
+	;call	LCD_delay_ms                                                                                                                      
+	;call	LCD_clear
 	call	ADC_Read
-	movf	ADRESH,W
-	call	LCD_Write_Hex
-	movf	ADRESL,W
-	call	LCD_Write_Hex
+	;movf	ADRESH,W
+	;call	LCD_Write_Hex
+	;movf	ADRESL,W
+	;call	LCD_Write_Hex
 	call	check
 	;goto	measure_loop		; goto current line in code
 	
@@ -100,10 +100,13 @@ delay	decfsz	delay_count	; decrement until zero
 
 CUTOFF	
 	;call	LCD_clear
-	;movlw	myTable_l-1	; output message to LCD (leave out "\n")
-	;lfsr	FSR2, myArray
+	;movlw	.16
 	;call	LCD_delay_ms
-	;call	LCD_Write_Message
+	movlw	myTable_l-1	; output message to LCD (leave out "\n")
+	lfsr	FSR2, myArray
+	call	LCD_Write_Message
+	;movlw	.16
+	;call	delay
 	movlw	myTable_l	; output message to UART
 	lfsr	FSR2, myArray
 	call	UART_Transmit_Message

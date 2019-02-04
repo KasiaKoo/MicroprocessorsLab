@@ -13,6 +13,11 @@ ADC_Setup
     movwf   ADCON1	    ; 0V for -ve reference and -ve input
     movlw   0xF6	    ; Right justified output
     movwf   ADCON2	    ; Fosc/64 clock and acquisition times
+    movlw   0x0B
+    movwf   0x050, ACCESS   ;cut-off value H
+    movlw   0x33
+    movwf   0x052, ACCESS   ;cut-off value L
+    
     return
 
 ADC_Read
