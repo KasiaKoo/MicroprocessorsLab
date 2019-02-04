@@ -27,9 +27,7 @@ setup	bcf	EECON1, CFGS	; point to Flash program memory
 	call	UART_Setup	; setup UART
 	call	LCD_Setup	; setup LCD
 	call	ADC_Setup	; setup ADC
-	movlw	0x00
-	movwf	TRISD
-	movwf	TRISH
+
 	
 	goto	start
 	
@@ -43,80 +41,53 @@ start 	lfsr	FSR0, myArray	; Load FSR0 with address in RAM
 	movwf	TBLPTRL		; load low byte to TBLPTRL
 	movlw	myTable_l	; bytes to read
 	movwf 	counter		; our counter register
-	;call	LCD_clear
-	;movlw	0x0B
-	;movwf	0x016
-	;movlw	0xff
-	;movwf	0x012
-	;movlw	0x0A
-	;movwf	0x014
+
 loop 	tblrd*+			; one byte from PM to TABLAT, increment TBLPRT
 	movff	TABLAT, POSTINC0; move data from TABLAT to (FSR0), inc FSR0	
 	decfsz	counter		; count down to zero
 	bra	loop		; keep going until finished
 		
-	;movlw	myTable_l-1	; output message to LCD (leave out "\n")
-	;lfsr	FSR2, myArray
-	;call	LCD_Write_Message
-
-	;movlw	myTable_l	; output message to UART
-	;lfsr	FSR2, myArray
-	;call	UART_Transmit_Message
-	
-	;call	check
-	;goto	$
-	
 measure_loop
-	;call	LCD_delay_ms                                                                                                                      
-	;call	LCD_clear
+	call	LCD_delay_ms
+	call	LCD_clear
 	call	ADC_Read
-	;movf	ADRESH,W
-	;call	LCD_Write_Hex
-	;movf	ADRESL,W
-	;call	LCD_Write_Hex
-	call	check
-	;goto	measure_loop		; goto current line in code
+	movf	ADRESH,W
+	call	LCD_Write_Hex
+	movf	ADRESL,W
+	call	LCD_Write_Hex
 	
 check
-	call	LCD_delay_ms
-	movlw	.500
-	call	LCD_delay_ms
-	;call	LCD_clear
-	;call	ADC_Read
 	movf	ADRESH, W
-	;movf	0x014, W
 	cpfseq	0x050
-	call	compare_H
-	call	compare_L
-	;bra	check
-	goto	measure_loop
-	
-compare_H
-	cpfslt	0x050
-	call	CUTOFF
+	bra	compare_H
+	bra	compare_L
+
+endcheck	
 	goto	measure_loop
 
+compare_H
+	cpfslt	0x050
+	bra	CUTOFF
+	goto	endcheck
+
+
+compare_L
+	movf	ADRESL, W
+	cpfslt	0x052
+	bra	CUTOFF
+	goto	endcheck
+	
+CUTOFF	
+	movlw	myTable_l-1	; output message to LCD (leave out "\n")
+	lfsr	FSR2, myArray
+	call	LCD_Write_Message
+	goto	endcheck
+	
+	
 	; a delay subroutine if you need one, times around loop in delay_count
 delay	decfsz	delay_count	; decrement until zero
 	bra delay
 	return
 
-CUTOFF	
-	;call	LCD_clear
-	movlw	myTable_l-1	; output message to LCD (leave out "\n")
-	lfsr	FSR2, myArray
-	call	LCD_Write_Message
-	;movlw	.16
-	;call	delay
-	movlw	myTable_l	; output message to UART
-	lfsr	FSR2, myArray
-	call	UART_Transmit_Message
-	goto	measure_loop
-	
-compare_L
-	movf	ADRESL, W
-	;movf	0x012, W
-	cpfslt	0x052
-	call	CUTOFF
 	
 	end
