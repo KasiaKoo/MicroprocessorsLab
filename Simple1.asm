@@ -79,6 +79,9 @@ measure_loop
 	
 check
 	call	LCD_delay_ms
+	movlw	.500
+	call	LCD_delay_ms
+	;call	LCD_clear
 	;call	ADC_Read
 	movf	ADRESH, W
 	;movf	0x014, W
@@ -100,8 +103,6 @@ delay	decfsz	delay_count	; decrement until zero
 
 CUTOFF	
 	;call	LCD_clear
-	;movlw	.16
-	;call	LCD_delay_ms
 	movlw	myTable_l-1	; output message to LCD (leave out "\n")
 	lfsr	FSR2, myArray
 	call	LCD_Write_Message
