@@ -16,6 +16,7 @@
       <itemPath>config.asm</itemPath>
       <itemPath>PWM.asm</itemPath>
       <itemPath>PWM_long.asm</itemPath>
+      <itemPath>LCD.asm</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -23,6 +24,7 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
     <itemPath>README.md</itemPath>
+    <itemPath>ADC.asm</itemPath>
   </logicalFolder>
   <sourceRootList>
     <Elem>.</Elem>
