@@ -6,15 +6,15 @@ acs0    udata_acs   ; named variables in access ram
 PWM_cnt_l   res 1   ; reserve 1 byte for variable PWM_cnt_l
 PWM_cnt_h   res 1   ; reserve 1 byte for variable PWM_cnt_h
    
-PWM_cnt_b   res	4
-PWM_cnt_m   res	4
-PWM_cnt_s   res	4
+PWM_cnt_b   res	4   ; reserve 4 bytes for big PWM cycle
+PWM_cnt_m   res	4   ; reserve 4 bytes for mid PWM cycle
+PWM_cnt_s   res	4   ; reserve 4 bytes for small PWM cycle
 PWM_cnt_ms  res 1   ; reserve 1 byte for ms counter
-PWM_pr	    res 4   ; reserve 4 bytes for pwm period
-PWM_dc	    res 4   ; reserve 4 bytes for pwm duty cycle
-PWM_counter res 2   ; reserve 2 bytes
-counter	    res	4   ; reserve 4 bytes
+PWM_pr	    res 4   ; reserve 4 bytes for PWM period
+PWM_dc	    res 4   ; reserve 4 bytes for PWM duty cycle
+counter	    res	4   ; reserve 4 bytes for test routine
 
+PWM_counter res 2   ; reserve 2 bytes
   
 
 PWM	code
@@ -24,13 +24,13 @@ PWM_Setup
 	clrf PORTE
 	clrf LATE	    ; PORTE as PWM motor cycle
 	movlw	0xC5
-	movwf	PWM_pr	    ;setting PWM period to 20 ms
+	movwf	PWM_pr	    ; setting PWM period length to 20 ms
 	movlw   0x05
 	movwf   PWM_counter
 	movlw	0x0A
-	movwf	PWM_dc
+	movwf	PWM_dc      ; setting minimum duty cycle length to 1 ms
 	movlw	0x02
-	movwf	counter
+	movwf	counter    
 	return
 	
 ;PWM_long
@@ -108,19 +108,19 @@ reset_dc
 
 	
 PWM_cycle_big
-	movwf	PWM_cnt_b
+	movwf	PWM_cnt_b   ; counting down from number specified in test routine depending on duty cycle length
 big	movlw	0x00
-	cpfseq	PWM_cnt_b
-	goto	PWM_mid
+	cpfseq	PWM_cnt_b   ; skip next instruction and return if counter has reached 0
+	goto	PWM_mid   ; delay of 0.1 ms 
 	return
 	
 	
 PWM_mid
 	movlw	0x09
 	movwf	PWM_cnt_m
-mid	decf	PWM_cnt_m
+mid	decf	PWM_cnt_m   ; counting down from 9
 	movlw	0x00
-	cpfseq	PWM_cnt_m
+	cpfseq	PWM_cnt_m   ; skip next instruction and branch to big cycle if counter has reached 0
 	goto	PWM_small
 	decf	PWM_cnt_b
 	bra	big
@@ -128,9 +128,9 @@ mid	decf	PWM_cnt_m
 PWM_small	
 	movlw	0x27
 	movwf	PWM_cnt_s
-small	decf	PWM_cnt_s
+small	decf	PWM_cnt_s   ; counting down from 39
 	movlw	0x00
-	cpfseq	PWM_cnt_s
+	cpfseq	PWM_cnt_s   ; skip next instruction and branch to mid cycle if counter has reached 0
 	bra	small
 	bra	mid
 	
