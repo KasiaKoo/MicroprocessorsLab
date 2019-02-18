@@ -27,7 +27,7 @@ PWM_Setup
 	movwf	PWM_pr	    ;setting PWM period to 20 ms
 	movlw   0x05
 	movwf   PWM_counter
-	movlw	0x0A
+	movlw	0x06
 	movwf	PWM_dc
 	movlw	0x02
 	movwf	counter
@@ -71,7 +71,7 @@ PWM_test_routine
 	movlw	0x00
 	cpfsgt	counter
 	incf	PWM_dc
-	movlw	0x14
+	movlw	0x11
 	cpfseq	PWM_dc
 	bra	PWM_test_routine
 reset_dc    
