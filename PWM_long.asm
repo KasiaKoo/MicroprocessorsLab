@@ -18,6 +18,7 @@ PWM_pr_con  res 4
 PWM_dc	    res 4   ; reserve 4 bytes for PWM duty cycle
 PWM_dc_con  res 4
 counter	    res	4   ; reserve 4 bytes for test routine
+work	    res	4
 
 PWM_counter res 2   ; reserve 2 bytes
   
@@ -41,30 +42,7 @@ PWM_Setup
 	movlw	0x20
 	movwf	counter    
 	return                    
-	
-;PWM_long
-	;movlw	0x01
-	;movwf	PORTE
-	;movf	PWM_dc, W
-	;call PWM_delay_ms
-	;movlw	0x00
-	;movwf	PORTE
-	;movf	PWM_dc, W
-	;subwf	PWM_pr, 0
-	;call	PWM_delay_ms
-	;decf    PWM_counter
-	;movlw   0x05
-	;cpfslt  PWM_dc
-	;bra     restart
-	;incf    PWM_dc
-;loop2	;movlw   0x00
-	;cpfseq  PWM_counter
-	;bra     PWM_long
-	;return
-	
-;restart movlw 0x01
-	;movwf PWM_dc
-	;goto loop2
+
 	
 PWM_test_routine
 	movlw	0x00
@@ -84,11 +62,11 @@ PWM_test_routine
 	call	PWM_cycle_big2
 	movf	PWM_pr_con, W
 	call	PWM_cycle_big
-	movlw	0x01
-	movff	counter, PORTH
+	movlw	0x00
 	cpfsgt	counter
-	incf	PWM_dc
-	movlw	0x57
+	return
+	;incf	PWM_dc
+	;movlw	0x57
 	cpfseq	PWM_dc
 	bra	PWM_test_routine
 
