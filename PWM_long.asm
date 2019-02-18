@@ -27,7 +27,7 @@ PWM_Setup
 	movwf	PWM_pr	    ; setting PWM period length to 20 ms
 	movlw   0x05
 	movwf   PWM_counter
-	movlw	0x0A
+	movlw	0x06
 	movwf	PWM_dc      ; setting minimum duty cycle length to 1 ms
 	movlw	0x02
 	movwf	counter    
