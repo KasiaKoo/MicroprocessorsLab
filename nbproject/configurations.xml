@@ -15,8 +15,9 @@
       <itemPath>Simple1.asm</itemPath>
       <itemPath>config.asm</itemPath>
       <itemPath>PWM.asm</itemPath>
-      <itemPath>PWM_long.asm</itemPath>
       <itemPath>LCD.asm</itemPath>
+      <itemPath>Top_motor_PWM.asm</itemPath>
+      <itemPath>Bottom_mottor_PWM.asm</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
