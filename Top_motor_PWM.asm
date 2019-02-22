@@ -15,7 +15,7 @@ cnt_4um     res	4   	; reserve 4 bytes for small PWM cycle
 PWM_pr	    res 4   ; reserve 4 bytes for PWM period remainder
 PWM_dc_T    res 4   ; reserve 4 bytes for PWM duty cycle remainder
 counter	    res	4   ; reserve 4 bytes for test routine
-PWM_counter res 2   ; reserve 2 bytes !!!!! Check if we use that
+
 PWM_dc_con  res 4   ; reserve 4 bytes for PWM period
 PWM_pr_con  res 4   ; reserve 4 bytes for PWM duty cycle
   
@@ -36,18 +36,16 @@ PWM	code
 ;~~~~~~ Top Moto PWM setup ~~~~~~~~~~~~~~~~~~~~~~~
 
 PWM_Setup_T
-	movlw	0xAA
+	movlw	0xB4
 	movwf	PWM_pr_con, BANKED		; setting PWM constant period length to 17 ms
 	movlw   0x05
 	movwf   PWM_dc_con, BANKED		; setting the minimum duty cycle to 0.5 ms
-	movlw	0x58
+	movlw	0x2F
 	movwf	PWM_pr, BANKED			; setting the Reminder to ~2 ms 
-	movlw   0x05
-	movwf   PWM_counter, BANKED		; !!!!! I Do not think we use it
-	movlw	0x04
+
+	movlw	0x08
 	movwf	PWM_dc_T, BANKED		; setting variable dc so that the motor is comfortable
-	movff	PWM_dc_T, PORTH
-	movlw	0x20
+	movlw	0x05
 	movwf	counter, BANKED    		;controls the speed of the rotation
 	return                    
 
