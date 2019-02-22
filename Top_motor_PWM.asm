@@ -90,28 +90,28 @@ PWM_delay_T
 	movwf	cnt_var, BANKED   ; counting down from number specified in rotate depending on duty cycle length
 Var_d	movlw	0x00
 	cpfseq	cnt_var, BANKED   ; skip next instruction and return if counter has reached 0
-	goto	10um_delay   ; delay of 0.1 ms 
+	goto	um20_delay   ; delay of 0.1 ms 
 	return
 	
 	
-20um_delay
+um20_delay
 	movlw	0x05
 	movwf	cnt_20um, BANKED
-20_d	decf	cnt_20um, BANKED   ; counting down from 9
+d_20	decf	cnt_20um, BANKED   ; counting down from 9
 	movlw	0x00
 	cpfseq	cnt_20um, BANKED   ; skip next instruction and branch to big cycle if counter has reached 0
-	goto	4um_delay
+	goto	um4_delay
 	decf	cnt_var, BANKED
 	bra	Var_d
 	
-4um_delay	
+um4_delay	
 	movlw	0x10
 	movwf	cnt_4um, BANKED
-4_d	decf	cnt_4um, BANKED   ; counting down from 39
+d_4	decf	cnt_4um, BANKED   ; counting down from 39
 	movlw	0x00
 	cpfseq	cnt_4um, BANKED   ; skip next instruction and branch to mid cycle if counter has reached 0
-	bra	4_d
-	bra	20_d
+	bra	d_4
+	bra	d_20
 
 	
 ;~~~~~~~~The delay used for 17 ms of the period for the motor~~~~~~~~~~~~~~~~~~~	
@@ -119,28 +119,28 @@ PWM_100um
 	movwf	cnt_con , BANKED  ; counting down from number specified in rotate
 Con_d	movlw	0x00
 	cpfseq	cnt_con, BANKED   ; skip next instruction and return if counter has reached 0
-	goto	10um_delay  ; delay of 0.1 ms 
+	goto	um100_delay  ; delay of 0.1 ms 
 	return
 	
 	
-100um_delay
+um100_delay
 	movlw	0x09
 	movwf	cnt_100um, BANKED
-100_d	decf	cnt_100um, BANKED   ; counting down from 9
+d_100	decf	cnt_100um, BANKED   ; counting down from 9
 	movlw	0x00
 	cpfseq	cnt_100um, BANKED   ; skip next instruction and branch to big cycle if counter has reached 0
-	goto	10um_delay
+	goto	um10_delay
 	decf	cnt_con, BANKED
 	bra	Con_d
 	
-10um_delay	
+um10_delay	
 	movlw	0x27
 	movwf	cnt_10um, BANKED
-10_d	decf	cnt_10um, BANKED   ; counting down from 39
+d_10	decf	cnt_10um, BANKED   ; counting down from 39
 	movlw	0x00
 	cpfseq	cnt_10um, BANKED   ; skip next instruction and branch to mid cycle if counter has reached 0
-	bra	10_d
-	bra	100_d
+	bra	d_10
+	bra	d_100
 	
 	end
 

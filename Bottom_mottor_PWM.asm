@@ -75,7 +75,7 @@ PWM_rotate_B
 	bra	check_dc			;if yes return to the interupt
 	bra	PWM_rotate_B			;if no repeat the loop
 
-chech_dc
+check_dc
 	movlw	0x57
 	cpfseq	PWM_dc_B			;if no: compare dc_to 87
 	return
@@ -96,28 +96,28 @@ PWM_delay_B
 	movwf	cnt_var   ; counting down from number specified in test routine depending on duty cycle length
 Var_d	movlw	0x00
 	cpfseq	cnt_var   ; skip next instruction and return if counter has reached 0
-	goto	20um_delay  ; delay of 0.1 ms 
+	goto	um20_delay  ; delay of 0.1 ms 
 	return
 	
 	
-20um_delay
+um20_delay
 	movlw	0x05
 	movwf	cnt_20um
-20_d	decf	cnt_20um   ; counting down from 9
+d_20	decf	cnt_20um   ; counting down from 9
 	movlw	0x00
 	cpfseq	cnt_20um   ; skip next instruction and branch to big cycle if counter has reached 0
-	goto	4um_delay
+	goto	um4_delay
 	decf	cnt_var
 	bra	Var_d
 	
-4um_delay	
+um4_delay	
 	movlw	0x10
 	movwf	cnt_4um
-4_d	decf	cnt_4um   ; counting down from 39
+d_4	decf	cnt_4um   ; counting down from 39
 	movlw	0x00
 	cpfseq	cnt_4um   ; skip next instruction and branch to mid cycle if counter has reached 0
-	bra	4_d
-	bra	20_d
+	bra	d_4
+	bra	d_20
 
 	
 ;~~~~~~~~The delay used for 17 ms of the period for the motor~~~~~~~~~~~~~~~~~~~	
@@ -125,28 +125,28 @@ PWM_100um
 	movwf	cnt_con   ; counting down from number specified in test routine depending on duty cycle length
 Con_d	movlw	0x00
 	cpfseq	cnt_con   ; skip next instruction and return if counter has reached 0
-	goto	100m_delay   ; delay of 0.1 ms 
+	goto	um100_delay   ; delay of 0.1 ms 
 	return
 	
 	
-100m_delay
+um100_delay
 	movlw	0x09
 	movwf	cnt_100um
-100_d	decf	cnt_100um   ; counting down from 9
+d_100	decf	cnt_100um   ; counting down from 9
 	movlw	0x00
 	cpfseq	cnt_100um   ; skip next instruction and branch to big cycle if counter has reached 0
-	goto	10um_delay
+	goto	um10_delay
 	decf	cnt_con
 	bra	Con_d
 	
-10um_delay	
+um10_delay	
 	movlw	0x27
 	movwf	cnt_10um
-10_d	decf	cnt_10um   ; counting down from 39
+d_10	decf	cnt_10um   ; counting down from 39
 	movlw	0x00
 	cpfseq	cnt_10um   ; skip next instruction and branch to mid cycle if counter has reached 0
-	bra	10_d
-	bra	100_d
+	bra	d_10
+	bra	d_100
 	
 	end
 

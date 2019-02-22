@@ -88,7 +88,7 @@ check_l					;if yes check for low
 	cpfslt	Y_ADC_l
 	call	sub_G			;if yellow is smaller than green substract from green and put it in diff_l
 	
-	movlw	0x19			
+	movlw	0x32			
 	cpfslt	diff_l			;is difference less than 25mV?
 	call	change_l		;if no go to change l
 	goto	measure_green		;if yes repeat
