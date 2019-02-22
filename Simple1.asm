@@ -17,7 +17,7 @@ G_ADC_l		res 4	; reserves four byte for low byte of green LED measurement
 diff_l		res 4	; reserves four byte for difference in measurements
 flag		res 4
 	
-	
+		
 main	code
 	org 0x0			
 	goto	setup
@@ -29,8 +29,6 @@ main	code
 int_hi	code	0x0008		; high vector, no low vector
 	btfss	INTCON,TMR0IF	; check that this is timer0 interrupt
 	retfie	FAST		; if not then return
-	incf	PWM_dc_B        ; incrementing the duty cycle
-	;call    PWM_rotate_B	; rotates the motor by new duty cycle
 	movlw	0xFF		; flag set by interupt to implement the azimuthal rotation
 	movwf	flag
 	bcf	INTCON,TMR0IF	; clear interrupt flag	
@@ -48,6 +46,19 @@ setup
 	call LCD_Setup		;setting up the LCD module
 
 ;~~~~~~~~~~Main Code~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	movlw   0x04            
+	movwf   PWM_dc_B
+	call    PWM_rotate_B	;making the motor face east before it begins rotation
+init
+	movlw   0x05		;select AN1 for measurement of photodiode
+	movwf   ADCON0		;turn ADC on
+	call	ADC_Read
+	movlw   0x02		;512mV cutoff for starting the rotation, this is the beginning of the day
+	cpfsgt  ADRESH
+	bra init
+	goto start		
+
+	
 start	
 	movlw	b'10000111'	; Set timer0 to 16-bit, Fosc/4/256
 	movwf	T0CON		; = 62.5KHz clock rate, approx 1sec rollover
@@ -164,5 +175,9 @@ delay						;delay if needed
 	decfsz	delay_count			; decrement until zero
 	bra delay
 	return
+	
+	
+	
+
 	
 	end

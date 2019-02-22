@@ -12,7 +12,7 @@ ADC_Setup
     bsf	    TRISA,RA2	    ; use pin A2(==AN2) for input
     bsf	    ANCON2,ANSEL16   ; set A2 to analog
     
-    movlw   0x01	    ; select AN1 for measurement
+    movlw   0x01	    ; select AN1 for measurement (default measurement, not used in code)
     movwf   ADCON0	    ; and turn ADC on
     movlw   0x30	    ; Select 4.096V positive reference
     movwf   ADCON1	    ; 0V for -ve reference and -ve input

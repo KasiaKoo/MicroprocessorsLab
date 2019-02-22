@@ -45,13 +45,14 @@ PWM_Setup_B
 	movwf   PWM_dc_con_B		; setting the minimum duty cycle to 0.5 ms
 	movlw	0x04
 	movwf	PWM_dc_B      		; setting variable dc so that the motor is comfortable
-	movlw	0x40
+	movlw	0x0A
 	movwf	counter    		;setting the number of pulses send to the motor with one dc
 	return                    
 
 	
 PWM_rotate_B
-	movlw	0x00
+	incf	PWM_dc_B        ; incrementing the duty cycle	
+rot	movlw	0x00
 	movwf	flag
 	cpfsgt	counter, BANKED			;checking if counter reached 0
 	call	counter_reset			;reset counter if 0
@@ -72,12 +73,14 @@ PWM_rotate_B
 	movlw	0x00
 	cpfsgt	counter				;checks if counter reached 0
 	bra	check_dc			;if yes return to the interupt
-	bra	PWM_rotate_B			;if no repeat the loop
+	bra	rot			;if no repeat the loop
 
 check_dc
 	movlw	0x57
 	cpfseq	PWM_dc_B			;if no: compare dc_to 87
 	return
+	;goto final				;if we were working on the timescale of a day, this would be the end of the azimuthal rotation
+
 reset_dc    					;if yes reset the counter
 	movlw	0x01
 	call	PWM_100um
@@ -85,6 +88,8 @@ reset_dc    					;if yes reset the counter
 	movwf	PWM_dc_B
 	return
 	
+final   
+	goto $	
 
 counter_reset
 	movlw	0x20

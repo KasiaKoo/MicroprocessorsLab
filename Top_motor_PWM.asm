@@ -43,7 +43,7 @@ PWM_Setup_T
 	movlw	0x2F
 	movwf	PWM_pr, BANKED			; setting the Reminder to ~2 ms 
 
-	movlw	0x08
+	movlw	0x2E
 	movwf	PWM_dc_T, BANKED		; setting variable dc so that the motor is comfortable
 	movlw	0x05
 	movwf	counter, BANKED    		;controls the speed of the rotation
