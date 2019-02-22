@@ -1,7 +1,7 @@
     #include p18f87k22.inc
     
     global  PWM_Setup_B, PWM_dc_B, PWM_rotate_B, PWM_delay_B
-    
+    extern  flag
 acs0    udata_acs   ; named variables in access ram
 ;~~~~~~~ Counters used in the delay    
 cnt_con		res 4   ; reserve 4 bytes for big PWM cycle
@@ -12,12 +12,12 @@ cnt_20um	res 4   ; reserve 4 bytes for mid PWM cycle
 cnt_4um   	res 4   ; reserve 4 bytes for small PWM cycle
 
 ;~~~~~~~ PWM period and duty cycle values
-PWM_pr	    res 4	; reserve 4 bytes for PWM period remainder
-PWM_pr_con  res 4	; reserve 4 bytes for PWM period
+PWM_pr_B	    res 4	; reserve 4 bytes for PWM period remainder
+PWM_pr_con_B  res 4	; reserve 4 bytes for PWM period
 PWM_dc_B    res 4	; reserve 4 bytes for PWM duty cycle remainder
-PWM_dc_con  res 4	; reserve 4 bytes for PWM duty cycl
+PWM_dc_con_B  res 4	; reserve 4 bytes for PWM duty cycl
 counter	    res	4	; reserve 4 bytes for test routine
-PWM_counter res 2   	; reserve 2 bytes !!!!! I do not think we need it
+
   
 ;................THE PWM FOR SG90 MOTOR..................................................
 ;Motor's datasheet requires 20 ms period which is not compatible with built in PWM module
@@ -38,37 +38,36 @@ PWM_Setup_B
 	clrf PORTE
 	clrf LATE	    		; PORTE as PWM motor cycle (as output)
 	movlw	0xAA
-	movwf	PWM_pr_con		; setting PWM period length to 17 ms
+	movwf	PWM_pr_con_B		; setting PWM period length to 17 ms
 	movlw	0x58
-	movwf	PWM_pr			; setting the Reminder to ~2 ms 
+	movwf	PWM_pr_B			; setting the Reminder to ~2 ms 
 	movlw   0x05
-	movwf   PWM_counter		;!!!!! I do not think we use this
-	movlw   0x05
-	movwf   PWM_dc_con		; setting the minimum duty cycle to 0.5 ms
+	movwf   PWM_dc_con_B		; setting the minimum duty cycle to 0.5 ms
 	movlw	0x04
 	movwf	PWM_dc_B      		; setting variable dc so that the motor is comfortable
-	movlw	0x20
+	movlw	0x40
 	movwf	counter    		;setting the number of pulses send to the motor with one dc
 	return                    
 
 	
 PWM_rotate_B
 	movlw	0x00
+	movwf	flag
 	cpfsgt	counter, BANKED			;checking if counter reached 0
 	call	counter_reset			;reset counter if 0
 	decf	counter, BANKED			;decrement counter if not 0
 	
 	bsf	PORTE, 0			;setting the pulse to high on RE4
-	movf    PWM_dc_con, W
+	movf    PWM_dc_con_B, W
 	call    PWM_100um			;implementing constant part of the duty cycle
 	movf	PWM_dc_B, W
 	call	PWM_delay_B			;implementing the variable part of the duty cycle
 	
 	bcf	PORTE, 0			;setting the pulse to low on RE4
 	movf	PWM_dc_B, W
-	subwf	PWM_pr, W			;finding how much remainder has to be implemented after this duty cycle
+	subwf	PWM_pr_B, W			;finding how much remainder has to be implemented after this duty cycle
 	call	PWM_delay_B			;implementing the remainder
-	movf	PWM_pr_con, W			
+	movf	PWM_pr_con_B, W			
 	call	PWM_100um			;implementing the constant part of the period
 	movlw	0x00
 	cpfsgt	counter				;checks if counter reached 0
@@ -80,6 +79,8 @@ check_dc
 	cpfseq	PWM_dc_B			;if no: compare dc_to 87
 	return
 reset_dc    					;if yes reset the counter
+	movlw	0x01
+	call	PWM_100um
 	movlw	0x04
 	movwf	PWM_dc_B
 	return
