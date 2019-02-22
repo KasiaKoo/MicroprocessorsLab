@@ -70,20 +70,21 @@ PWM_rotate_B
 	call	PWM_delay_B			;implementing the remainder
 	movf	PWM_pr_con, W			
 	call	PWM_100um			;implementing the constant part of the period
-	
 	movlw	0x00
 	cpfsgt	counter				;checks if counter reached 0
-	return					;if yes return to the interupt
-	movlw	0x57
-	cpfseq	PWM_dc_B			;if no: compare dc_to 87
+	bra	check_dc			;if yes return to the interupt
 	bra	PWM_rotate_B			;if no repeat the loop
 
-
+chech_dc
+	movlw	0x57
+	cpfseq	PWM_dc_B			;if no: compare dc_to 87
+	return
 reset_dc    					;if yes reset the counter
 	movlw	0x04
 	movwf	PWM_dc_B
-	bra	PWM_rotate_B
+	return
 	
+
 counter_reset
 	movlw	0x20
 	movwf	counter
