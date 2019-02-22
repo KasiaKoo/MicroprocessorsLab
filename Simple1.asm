@@ -4,6 +4,7 @@
 	extern PWM_Setup_T, PWM_dc_T, PWM_rotate_T, PWM_delay_T
 	extern  ADC_Setup, ADC_Read
 	extern LCD_Setup, LCD_Write_Message, LCD_Write_Hex, LCD_clear, LCD_delay_ms
+	global	flag
 	
 acs0    udata_acs   ; named variables in access ram
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -14,6 +15,7 @@ Y_ADC_l		res 4	; reserves four byte for low byte of yellow LED measurement
 G_ADC_h		res 4	; reserves four byte for high byte of green LED measurement
 G_ADC_l		res 4	; reserves four byte for low byte of green LED measurement
 diff_l		res 4	; reserves four byte for difference in measurements
+flag		res 4
 	
 	
 main	code
@@ -28,7 +30,9 @@ int_hi	code	0x0008		; high vector, no low vector
 	btfss	INTCON,TMR0IF	; check that this is timer0 interrupt
 	retfie	FAST		; if not then return
 	incf	PWM_dc_B        ; incrementing the duty cycle
-	call    PWM_rotate_B	; rotates the motor by new duty cycle
+	;call    PWM_rotate_B	; rotates the motor by new duty cycle
+	movlw	0xFF		; flag set by interupt to implement the azimuthal rotation
+	movwf	flag
 	bcf	INTCON,TMR0IF	; clear interrupt flag	
 	retfie	FAST		; fast return from interrupt
 	
@@ -36,7 +40,8 @@ int_hi	code	0x0008		; high vector, no low vector
 setup	
 	clrf TRISH
 	clrf PORTH  		;setting port H as output for esting
-	
+	movlw	0x00
+	movwf	flag		;clear flag of interupt
 	call PWM_Setup_B	;setting up bottom motor	
 	call PWM_Setup_T	;setting up top motor
 	call ADC_Setup		;settung up the ADC module
@@ -51,9 +56,11 @@ start
 
 
 measure_green
-	movf	PWM_dc_T, W	
-	movwf	PORTH		;displaying top duty cycle on PORT H
-	
+	call	PWM_rotate_T
+	movlw	0xFF
+	movff	flag, PORTH
+	cpfslt	flag
+	call    PWM_rotate_B	; rotates the motor by new duty cycle
 	movlw	0x00
 	movwf	diff_l		;reset the difference in mesurement to zero
 
@@ -126,14 +133,32 @@ sub_G	movf	Y_ADC_l, W			;substracting yellow from green (G-Y)
 	return
 	
 dec_dc						;decrementing the duty cycle or top motor
+	call	check_low_dc
 	decf	PWM_dc_T
 	return
 
-inc_dc						;decrementing the duty cycle or top motor
+inc_dc							;decrementing the duty cycle or top motor
+	call	check_high_dc
 	incf	PWM_dc_T
 	return
 	
+check_high_dc
+	movlw	0x30
+	cpfseq	PWM_dc_T			;if no: compare dc_to 87
+	return 
+	decf	PWM_dc_T
+	;movlw	0x01
+	;movwf	PWM_dc_T
+	return	
 	
+check_low_dc
+	movlw	0x08
+	cpfseq	PWM_dc_T			;if no: compare dc_to 04
+	return
+	incf	PWM_dc_T
+	;movlw	0x30
+	;movwf	PWM_dc_T
+	return	
 
 delay						;delay if needed
 	decfsz	delay_count			; decrement until zero
