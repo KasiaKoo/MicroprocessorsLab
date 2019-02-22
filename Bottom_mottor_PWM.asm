@@ -74,11 +74,12 @@ PWM_rotate_B
 	movlw	0x00
 	cpfsgt	counter				;checks if counter reached 0
 	return					;if yes return to the interupt
-	cpfseq	PWM_dc_B			;if no compare dc_to zero
-	bra	PWM_rotate_B			;return to the loop
+	movlw	0x57
+	cpfseq	PWM_dc_B			;if no: compare dc_to 87
+	bra	PWM_rotate_B			;if no repeat the loop
 
 
-reset_dc    
+reset_dc    					;if yes reset the counter
 	movlw	0x04
 	movwf	PWM_dc_B
 	bra	PWM_rotate_B
