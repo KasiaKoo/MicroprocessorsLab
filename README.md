@@ -1,12 +1,15 @@
 # Microprocessors
-Repository for Physics Year 3 microprocessors lab
 
-A simple assembly program for PIC18 microprocessor, that counts to 100, putting the current count value out onto PORTB
+Files used: Simple1, ADC, Top_Motor_PWM, Bottom_Motor_PWM
 
-Reads a table (message) from programme memory to data memory
+Pulse width modification modules were developed for top and bottom motors separately in order to create the correctly shaped pulses to send the MG90S motors to the correct angles
 
-Initialises UART and writes a message (the table) to UART 
+Top and bottom motors have the same logic and only vary in terms of the values used in setup
 
-Initialises LCD and writes the message to the LCD
+Analogue inputs from LDR potential divider circuits were converted to digital using code sourced from original master branch
 
-Initialises ADC, reads values and display as hex on LCD
+Main code compares voltages from LDR potential dividers in order to move the top motor towards the LDR with higher light intensity incident on it
+
+Bottom motor movement is on timer interrupt
+
+
