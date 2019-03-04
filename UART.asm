@@ -6,7 +6,9 @@ acs0    udata_acs	    ; named variables in access ram
 UART_counter res 1	    ; reserve 1 byte for variable UART_counter
 
 UART    code
-    
+ 
+;................This module is not used..................................................
+
 UART_Setup
     bsf	    RCSTA1, SPEN    ; enable
     bcf	    TXSTA1, SYNC    ; synchronous
