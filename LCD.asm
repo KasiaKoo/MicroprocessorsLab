@@ -16,7 +16,9 @@ LCD_hex_tmp res 1   ; reserve 1 byte for variable LCD_hex_tmp
     	constant    LCD_RS=4	; LCD register select bit
 
 LCD	code
-    
+
+;................This module is not used ..................................................
+
 LCD_Setup
 	clrf    LATB
 	movlw   b'11000000'	    ; RB0:5 all outputs
